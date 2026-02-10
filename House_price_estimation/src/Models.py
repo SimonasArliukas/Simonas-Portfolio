@@ -1,10 +1,10 @@
 from src.Features import selecting_data
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split,GridSearchCV, RandomizedSearchCV
 from sklearn.linear_model import LinearRegression
 from src.Data_utils import Calculate_metrics
 from sklearn.preprocessing import StandardScaler
 from sklearn.svm import SVR
-from sklearn.model_selection import GridSearchCV
+
 
 data=selecting_data()
 
@@ -34,15 +34,21 @@ X_train_scaled=StandardScaler().fit_transform(X_train)
 X_test_scaled=StandardScaler().fit_transform(X_test)
 
 param_grid = {
-    'kernel': ['linear', 'rbf', 'poly'], ##Controls the shape of the decision boundary rbf and poly can fit more complex decision boundaries
-    'C': [0.1, 1, 10, 100], ##Regularization parameter on the loss function
-    'gamma': ['scale', 0.01, 0.1, 1], #Controls how far the influence of a single support vector reaches
-    'epsilon': [0.01, 0.1, 0.5] ## epsilon insensitive tube defines the range where errors are ignored
+    'kernel': ['linear',"rbf"], ##Controls the shape of the decision boundary rbf and poly can fit more complex decision boundaries
+    'C': [0.1, 1,10], ##Regularization parameter on the loss function
+    'epsilon': [0.01, 0.1] ,## epsilon insensitive tube defines the range where errors are ignored
+    'gamma': ['scale']
 }
 
 ##Compute grid search over all combinations of hyperparameters
 
-grid = GridSearchCV(SVR(), param_grid, cv=5, scoring='neg_mean_squared_error')
-grid.fit(X_train_scaled, Y_train)
-
-print("Best parameters:", grid.best_params_)
+grid_search = RandomizedSearchCV(
+    SVR(),
+    param_distributions=param_grid,
+    n_iter=10,       # 10 random combinations
+    cv=3,            # 3-fold CV for speed
+    scoring='neg_mean_squared_error',
+    n_jobs=-1,       # use all CPU cores
+    random_state=42,
+    verbose=1
+)
