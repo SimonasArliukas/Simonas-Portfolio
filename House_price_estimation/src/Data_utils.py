@@ -10,6 +10,7 @@ from sklearn.feature_selection import SequentialFeatureSelector
 from sklearn.neighbors import KNeighborsRegressor
 import shap
 import numpy as np
+from sklearn.metrics import mean_squared_error, mean_absolute_error
 
 
 load_dotenv()
@@ -50,9 +51,9 @@ def select_features(X, y, method='lasso', top_k=5):
     y: pandas.Series
         Target variable in the dataset that you want to predict.
     method: str, default='lasso'
-        Method of selecting features. Lasso, Random Forest or sequential feature selection
+        Method of selecting features. Lasso, Random Forest or sequential feature selection.
     top_k:  int, default=5
-        How many features to select in sequantial selection. Selects top k features
+        How many features to select in sequantial selection. Selects top k features.
 
     Returns
     --------
@@ -100,6 +101,53 @@ def select_features(X, y, method='lasso', top_k=5):
         sfs = SequentialFeatureSelector(knn,n_features_to_select=top_k,direction='forward')
         sfs = sfs.fit(X, y)
         return list(sfs.support_)
+
+def mean_absolute_percentage_error(Y_TRUE, Y_PRED):
+    """
+    USE: Calculates the mean absolute percentage error.
+
+    Parameters
+    ----------
+    Y_TRUE: Pandas.Series
+        True response values taken from the dataset.
+    Y_PRED: Pandas.Series
+        Predicted response values taken from the model.
+    Returns
+    -----------
+    mean_absolute_percentage_error: float
+        Mean absolute percentage error.
+
+    """
+    y_true, y_pred = np.array(Y_TRUE), np.array(Y_PRED)
+    # Avoid division by zero
+    non_zero_idx = y_true != 0
+    return np.mean(np.abs((y_true[non_zero_idx] - y_pred[non_zero_idx]) / y_true[non_zero_idx])) * 100
+
+def Calculate_metrics(Y_test,Y_pred):
+    """
+    USE: Calculates root mean square error, mean absolute error and mean absolute percentage error.
+
+    Parameters
+    ----------
+    Y_test: pandas.Series
+        True response values taken from the dataset.
+    Y_pred: pandas.Series
+        Predicted response values taken from the model.
+
+    Returns
+    -------
+    metrics: tuple
+        Retruns mean square error, mean absolute error, and mean absolute percentage error.
+    """
+    rmse = mean_squared_error(Y_test, Y_pred)
+    mae = mean_absolute_error(Y_test, Y_pred)
+    mape = mean_absolute_percentage_error(Y_test, Y_pred)
+
+    return dict(RMSE=rmse, MAE=mae, MAPE=float(mape))
+
+
+
+
 
 
 
