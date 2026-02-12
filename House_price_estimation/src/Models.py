@@ -30,25 +30,38 @@ Calculate_metrics(Y_test,Y_pred)
 ##First scaling and centering of features is an assumption for the model.
 ##It is necessary to scale and center after the split to not contaminate the testing set.
 
-X_train_scaled=StandardScaler().fit_transform(X_train)
-X_test_scaled=StandardScaler().fit_transform(X_test)
 
-param_grid = {
-    'kernel': ['linear',"rbf"], ##Controls the shape of the decision boundary rbf and poly can fit more complex decision boundaries
-    'C': [0.1, 1,10], ##Regularization parameter on the loss function
-    'epsilon': [0.01, 0.1] ,## epsilon insensitive tube defines the range where errors are ignored
-    'gamma': ['scale']
-}
+##Support vector regression
 
-##Compute grid search over all combinations of hyperparameters
+##First scaling and centering of features is an assumption for the model.
+##It is necessary to scale and center after the split to not contaminate the testing set.
 
-grid_search = RandomizedSearchCV(
-    SVR(),
-    param_distributions=param_grid,
-    n_iter=10,       # 10 random combinations
-    cv=3,            # 3-fold CV for speed
-    scoring='neg_mean_squared_error',
-    n_jobs=-1,       # use all CPU cores
-    random_state=42,
-    verbose=1
-)
+scaler=StandardScaler()
+
+X_train_scaled=scaler.fit_transform(X_train)
+X_test_scaled=scaler.transform(X_test)
+
+# param_grid = {
+#     'kernel': ['linear',"rbf"], ##Controls the shape of the decision boundary rbf and poly can fit more complex decision boundaries
+#     'C': [0.1, 1,10], ##Regularization parameter on the loss function
+#     'epsilon': [0.01, 0.1] ,## epsilon insensitive tube defines the range where errors are ignored
+#     'gamma': ['scale']
+# }
+#
+# ##Compute grid search over all combinations of hyperparameters
+#
+# grid_search = GridSearchCV(
+#     SVR(),
+#     param_grid=param_grid,
+#     cv=5,
+#     scoring='neg_root_mean_squared_error',
+#     n_jobs=-1,
+#     verbose=1
+# )
+# grid_search.fit(X_train_scaled,Y_train)
+# print(grid_search.best_params_)
+
+Model=SVR(kernel='rbf',C=10,epsilon=0.1,gamma="scale")
+Model.fit(X_train_scaled,Y_train)
+SVR_pred=Model.predict(X_test_scaled)
+Calculate_metrics(Y_test,SVR_pred)
