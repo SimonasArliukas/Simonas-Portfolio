@@ -1,3 +1,4 @@
+import lightgbm as lgb
 from src.Features import selecting_data
 from sklearn.model_selection import train_test_split,GridSearchCV, RandomizedSearchCV
 from sklearn.linear_model import LinearRegression
@@ -5,7 +6,6 @@ from src.Data_utils import Calculate_metrics
 from sklearn.preprocessing import StandardScaler
 from sklearn.svm import SVR
 from xgboost import XGBRegressor
-
 
 data=selecting_data()
 
@@ -88,9 +88,49 @@ Calculate_metrics(Y_test,SVR_pred)
 # random_search_XGBOOST.fit(X_train, Y_train)
 # print(random_search_XGBOOST.best_params_)
 
-#{'subsample': 0.8, 'reg_lambda': 1, 'reg_alpha': 0.01, 'n_estimators': 500, 'max_depth': 7, 'learning_rate': 0.05}
+#{'subsample': 0.8, 'reg_lambda': 2, 'reg_alpha': 0, 'n_estimators': 500, 'max_depth': 7, 'learning_rate': 0.05}
 
-Model_XGBOOST=XGBRegressor(max_depth=7,learning_rate=0.05,n_estimators=500,subsample=0.8,reg_lambda=1,reg_alpha=0.1,random_state=42)
+Model_XGBOOST=XGBRegressor(max_depth=7,learning_rate=0.05,n_estimators=500,subsample=0.8,reg_lambda=2,reg_alpha=0,random_state=42)
 Model_XGBOOST.fit(X_train,Y_train)
 XG_Boost_predictions=Model_XGBOOST.predict(X_test)
 Calculate_metrics(Y_test,XG_Boost_predictions)
+
+##LIGHTMGBM
+
+# param_grid_LGBM= {
+#     'n_estimators': [100, 200, 500],
+#     'max_depth': [3, 5, 7, 9],
+#     'learning_rate': [0.01, 0.05, 0.1],
+#     'subsample': [0.6, 0.8, 1.0],
+#     'colsample_bytree': [0.6, 0.8, 1.0],
+#     'reg_alpha': [0, 0.01, 0.1],
+#     'reg_lambda': [1, 1.5, 2]
+# }
+#
+# grid_search_LGBM= RandomizedSearchCV(
+#     estimator=lgb.LGBMRegressor(random_state=42),
+#     param_distributions=param_grid_LGBM,
+#     n_iter=100,
+#     cv=5,
+#     scoring='neg_root_mean_squared_error',
+#     n_jobs=-1,
+#     verbose=1,
+#     random_state=42
+# )
+#
+# grid_search_LGBM.fit(X_train,Y_train)
+#
+# print(grid_search_LGBM.best_params_)
+
+# #Best params {'subsample': 0.6,
+#  'reg_lambda': 2,
+#  'reg_alpha': 0.1,
+#  'n_estimators': 500,
+#  'max_depth': 9,
+#  'learning_rate': 0.1,
+#  'colsample_bytree': 0.8}
+
+Model_LightGBM=lgb.LGBMRegressor(learning_rate=0.1,n_estimators=500,reg_alpha=0.1,reg_lambda=2,max_depth=9,subsample=0.6,colsample_bytree=0.8,random_state=42)
+Fitted_LightGBM=Model_LightGBM.fit(X_train,Y_train)
+LightGBM_predictions=Fitted_LightGBM.predict(X_test)
+print(Calculate_metrics(Y_test,LightGBM_predictions))

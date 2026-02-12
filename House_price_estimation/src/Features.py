@@ -18,7 +18,6 @@ def selecting_data():
     return X, Y
 
 
-
 #Only runs when executed directly
 if __name__ == "__main__":
     print(select_features(selecting_data()[0], selecting_data()[1], method="rf"))
