@@ -13,7 +13,4 @@ engine = create_engine(
 
 data = pd.read_sql("SELECT * FROM GDP_inference_clean", engine)
 
-
 log_differencing(data)
-
-

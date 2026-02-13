@@ -3,7 +3,7 @@ from fredapi import Fred
 import os
 from dotenv import load_dotenv
 import pandas as pd
-import cryptography
+
 
 load_dotenv()
 
@@ -14,7 +14,8 @@ engine = create_engine(
     f"{os.getenv('MYSQL_HOST')}:{os.getenv('MYSQL_PORT')}/{os.getenv('MYSQL_DB')}"
 )
 
-def Scrape_from_Fred(variables:list):
+
+def Scrape_from_Fred(variables: list):
     """
     USE: Functions scrapes data from FRED API and puts it into a dataframe
 
@@ -29,12 +30,12 @@ def Scrape_from_Fred(variables:list):
         Returns time series dataframe scraped from FRED API
     """
 
-    data=pd.DataFrame()
+    data = pd.DataFrame()
 
     for variable in variables:
         temp = fred.get_series(variable)
-        temp_df = temp.reset_index() ##Reset index so the first column is date
-        temp_df.columns = ["date", variable] ##Sets the first column is date so we can merge on date
+        temp_df = temp.reset_index()  ##Reset index so the first column is date
+        temp_df.columns = ["date", variable]  ##Sets the first column is date so we can merge on date
 
         if data.empty:
             data = temp_df
@@ -43,7 +44,9 @@ def Scrape_from_Fred(variables:list):
 
     return data
 
-Time_series_data=Scrape_from_Fred(["PRS85006091","UNRATE","DEXUSEU","DFF","CORESTICKM159SFRBATL","gdp"])
+
+Time_series_data = Scrape_from_Fred(
+    ["PRS85006091", "UNRATE", "DEXUSEU", "DFF", "CORESTICKM159SFRBATL", "gdp", "POPTHM"])
 
 Time_series_data.to_sql(
     name="GDP_inference",
@@ -51,3 +54,6 @@ Time_series_data.to_sql(
     if_exists="replace",
     index=False
 )
+
+Time_series_data.to_csv("GDP_inference.csv")
+
