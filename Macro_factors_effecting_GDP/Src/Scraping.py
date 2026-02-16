@@ -46,7 +46,7 @@ def Scrape_from_Fred(variables: list):
 
 
 Time_series_data = Scrape_from_Fred(
-    ["PRS85006091", "UNRATE", "DEXUSEU", "DFF", "CORESTICKM159SFRBATL", "gdp", "POPTHM"])
+    ["PRS85006091", "UNRATE", "DEXUSEU", "DFF", "CORESTICKM159SFRBATL", "gdp", "POPTHM","GPDIC1","FGEXPND"])
 
 Time_series_data.to_sql(
     name="GDP_inference",

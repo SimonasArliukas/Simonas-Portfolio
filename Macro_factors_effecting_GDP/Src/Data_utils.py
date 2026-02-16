@@ -4,6 +4,7 @@ from itertools import combinations
 import pandas as pd
 
 
+
 def differencing(data):
     """
     USE: Computes differenced time series
@@ -59,3 +60,5 @@ def cointegration(data_coint, significance=0.05):
     for col in data_coint.columns:
         coint_matrix.loc[col, col] = None
     return coint_matrix, pairs
+
+
