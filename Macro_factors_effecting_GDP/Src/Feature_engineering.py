@@ -1,4 +1,3 @@
-from Src.Data_utils import differencing
 from dotenv import load_dotenv
 from sqlalchemy import create_engine
 import os
@@ -12,9 +11,15 @@ engine = create_engine(
 )
 
 
-
-
 def feature_engineering():
+    """
+    USE: Puts I(1) and I(0) variables in different tables and creates correcly rescaled GDP per capita variable.
+
+    Returns
+    --------
+    Data: pd.DataFrame
+        2 dataframes one with the relevant I(1) and the other with relevat I(0) variables.
+    """
     data = pd.read_sql("SELECT * FROM GDP_inference_clean", engine)
 
     data.columns = ["date", "Labor Productivity", "Unemployment Rate", "Federal Funds Rate", "Inflation", "GDP",
