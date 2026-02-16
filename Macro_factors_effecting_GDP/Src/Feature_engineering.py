@@ -16,10 +16,10 @@ engine = create_engine(
 
 def feature_engineering():
     data = pd.read_sql("SELECT * FROM GDP_inference_clean", engine)
-    data.to_csv("GDP_inference_clean.csv", index=False)
+    
     data.columns = ["date", "Labor Productivity", "Unemployment Rate", "Federal Funds Rate", "Inflation", "GDP",
                     "Population", "Investment", "Government Spending"]
-    data["GDP_per_capita"] = data["GDP"] / data["Population"]
+    data["GDP_per_capita"] = data["GDP"]*1000000 / data["Population"]
 
     exclude = ["date", "Unemployment Rate", "Federal Funds Rate", "GDP", "Population"]
     data_i1 = data.loc[:, ~data.columns.isin(exclude)]
